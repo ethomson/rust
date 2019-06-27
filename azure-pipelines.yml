@@ -5,7 +5,7 @@ jobs:
   timeoutInMinutes: 600
   pool: 'wintest'
   steps:
-  - template: steps/run.yml
+  - template: .azure-pipelines/steps/run.yml
   strategy:
     matrix:
       dist-i686-msvc:
