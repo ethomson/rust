@@ -69,6 +69,9 @@ for i in ${!modules[@]}; do
         use_git="$use_git $module"
     fi
 done
+echo "git submodule deinit -f $use_git && \
+    git submodule sync && \
+    git submodule update -j 16 --init --recursive $use_git"
 retry sh -c "git submodule deinit -f $use_git && \
     git submodule sync && \
     git submodule update -j 16 --init --recursive $use_git"
