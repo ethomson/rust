@@ -13,4 +13,20 @@ jobs:
         RUST_BACKTRACE: 1
       dist-86_64-linux:
         IMAGE: dist-x86_64-linux
-
+- job: Windows
+  timeoutInMinutes: 600
+  pool: 'wintest'
+  steps:
+  - template: .azure-pipelines/steps/run.yml
+  strategy:
+    matrix:
+      dist-i686-msvc:
+        MSYS_BITS: 32
+        RUST_CONFIGURE_ARGS: --build=i686-pc-windows-gnu
+        SCRIPT: make ci-subset-1
+        MINGW_URL: https://rust-lang-ci2.s3.amazonaws.com/rust-ci-mirror
+        MINGW_ARCHIVE: i686-6.3.0-release-posix-dwarf-rt_v5-rev2.7z
+        MINGW_DIR: mingw32
+        # FIXME(#59637)
+        NO_DEBUG_ASSERTIONS: 1
+        NO_LLVM_ASSERTIONS: 1
