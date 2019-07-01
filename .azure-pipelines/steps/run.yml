@@ -72,8 +72,10 @@ steps:
   condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
   displayName: Check out submodules (Unix)
 - script: |
-    if not exist D:\cache\rustsrc\NUL mkdir D:\cache\rustsrc
-    sh src/ci/init_repo.sh . /d/cache/rustsrc
+    if "%CACHE_DIR%"=="" set CACHE_DIR="D:\cache\rustsrc"
+    for /f "tokens=*" %%a in ('cygpath -u %CACHE_DIR%') do set CACHE_DIR_UNIX=%%a
+    if not exist "%CACHE_DIR%\NUL" mkdir %CACHE_DIR%
+    sh src/ci/init_repo.sh . %CACHE_DIR_UNIX%
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
   displayName: Check out submodules (Windows)
 
