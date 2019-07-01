@@ -63,6 +63,10 @@ steps:
   displayName: Enable IPv6
   condition: and(and(succeeded(), eq(variables['Agent.OS'], 'Linux')), startsWith(variables['Agent.Name'], 'Hosted'))
 
+# Set the cache path if necessary
+- bash: echo "##vso[task.setvariable variable=CACHE_DIR]D:\Cache\rustsrc"
+  condition: and(and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT')), startsWith(variables['Agent.Name'], 'Hosted'))
+
 # Check out all our submodules, but more quickly than using git by using one of
 # our custom scripts
 - bash: |
@@ -72,7 +76,7 @@ steps:
   condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
   displayName: Check out submodules (Unix)
 - script: |
-    if "%CACHE_DIR%"=="" set CACHE_DIR="D:\cache\rustsrc"
+    if "%CACHE_DIR%"=="" set CACHE_DIR="C:\cache\rustsrc"
     for /f "tokens=*" %%a in ('cygpath -u %CACHE_DIR%') do set CACHE_DIR_UNIX=%%a
     if not exist "%CACHE_DIR%\NUL" mkdir %CACHE_DIR%
     sh src/ci/init_repo.sh . %CACHE_DIR_UNIX%
