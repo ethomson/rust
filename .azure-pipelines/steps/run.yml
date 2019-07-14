@@ -68,7 +68,7 @@ steps:
     echo '{"ipv6":true,"fixed-cidr-v6":"fd9a:8454:6789:13f7::/64"}' | sudo tee /etc/docker/daemon.json
     sudo service docker restart
   displayName: Enable IPv6
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'), ne(variables['System.PhaseName'], 'Linux4'))
 
 # Check out all our submodules, but more quickly than using git by using one of
 # our custom scripts
@@ -79,8 +79,8 @@ steps:
   condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
   displayName: Check out submodules (Unix)
 - script: |
-    if not exist D:\cache\rustsrc\NUL mkdir D:\cache\rustsrc
-    sh src/ci/init_repo.sh . /d/cache/rustsrc
+    if not exist C:\cache\rustsrc\NUL mkdir C:\cache\rustsrc
+    sh src/ci/init_repo.sh . /c/cache/rustsrc
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
   displayName: Check out submodules (Windows)
 

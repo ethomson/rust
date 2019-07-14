@@ -132,17 +132,26 @@ fi
 # goes ahead and sets it for all builders.
 args="$args --privileged"
 
-exec docker \
+if [ "$SYSTEM_PHASENAME" = "Linux4" ]; then
+  docker create -v /checkout --name checkout alpine:3.4 /bin/true
+  docker cp . checkout:/checkout
+  args="$args --volumes-from checkout"
+else
+  args="$args --volume $root_dir:/checkout:ro"
+  args="$args --volume $objdir:/checkout/obj"
+  args="$args --volume $HOME/.cargo:/cargo"
+  args="$args --volume $HOME/rustsrc:$HOME/rustsrc"
+  args="$args --env LOCAL_USER_ID=`id -u`"
+fi
+
+docker \
   run \
-  --volume "$root_dir:/checkout:ro" \
-  --volume "$objdir:/checkout/obj" \
   --workdir /checkout/obj \
   --env SRC=/checkout \
   $args \
   --env CARGO_HOME=/cargo \
   --env DEPLOY \
   --env DEPLOY_ALT \
-  --env LOCAL_USER_ID=`id -u` \
   --env CI \
   --env TRAVIS \
   --env TRAVIS_BRANCH \
@@ -151,9 +160,12 @@ exec docker \
   --env TOOLSTATE_REPO_ACCESS_TOKEN \
   --env TOOLSTATE_REPO \
   --env CI_JOB_NAME="${CI_JOB_NAME-$IMAGE}" \
-  --volume "$HOME/.cargo:/cargo" \
-  --volume "$HOME/rustsrc:$HOME/rustsrc" \
   --init \
   --rm \
   rust-ci \
   /checkout/src/ci/run.sh
+
+if [ "$SYSTEM_PHASENAME" = "Linux4" ]; then
+  rm -rf $objdir
+  docker cp checkout:/checkout/obj $objdir
+fi
