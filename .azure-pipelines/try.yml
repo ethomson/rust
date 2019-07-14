@@ -2,8 +2,8 @@ pr: none
 trigger:
 - try
 
-variables:
-- group: real-prod-credentials
+#variables:
+#- group: real-prod-credentials
 
 jobs:
 # - job: Linux
