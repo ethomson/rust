@@ -29,6 +29,8 @@ steps:
 - script: |
     powershell -Command "$ProgressPreference = 'SilentlyContinue'; iwr -outf %TEMP%\LLVM-7.0.0-win64.exe https://rust-lang-ci2.s3.amazonaws.com/rust-ci-mirror/LLVM-7.0.0-win64.exe"
     set CLANG_DIR=%CD%\citools\clang-rust
+    echo CLANG_DIR is %CLANG_DIR%
+    echo TEMP is %TEMP%
     %TEMP%\LLVM-7.0.0-win64.exe /S /NCRC /D=%CLANG_DIR%
     set RUST_CONFIGURE_ARGS=%RUST_CONFIGURE_ARGS% --set llvm.clang-cl=%CLANG_DIR%\bin\clang-cl.exe
     echo ##vso[task.setvariable variable=RUST_CONFIGURE_ARGS]%RUST_CONFIGURE_ARGS%
